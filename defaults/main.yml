@@ -1,0 +1,3 @@
+dhcp_to_pxe_tftp_root: /mnt/extstorage/tftp
+dhcp_to_pxe_bootfile: netboot.xyz.efi
+dhcp_to_pxe_server_address: '127.0.0.1'

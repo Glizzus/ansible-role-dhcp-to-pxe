@@ -1,0 +1,25 @@
+# I would use an blockinfile for this, but the block already exists in the file.
+# These commands are idempotent enough anyway.
+- name: Check and update dnsmasq configuration
+  vars:
+    dnsmaq_settings:
+      enable_tftp: 1
+      tftp_root: "{{ dhcp_to_pxe_tftp_root }}"
+      dhcp_boot: "{{ dhcp_to_pxe_bootfile }}/{{ dhcp_to_pxe_server_address }}"
+  block:
+    - name: Check current dnsmasq setting for {{ item.key }}
+      ansible.builtin.command: uci get dhcp.@dnsmasq[0].{{ item.key }}
+      register: current_setting
+      failed_when: current_setting.rc != 0 and 'Entry not found' not in current_setting.stderr
+      changed_when: false
+      loop: "{{ dnsmaq_settings | dict2items }}"
+
+    - name: Update dnsmasq setting for {{ item.key }}
+      ansible.builtin.command: uci set dhcp.@dnsmasq[0].{{ item.key }}="{{ item.value }}"
+      when: current_setting.stdout != item.value
+      register: update_setting
+      changed_when: update_setting.rc == 0
+      loop: "{{ dnsmaq_settings | dict2items }}"
+      notify:
+        - Commit uci
+        - Restart dnsmasq
