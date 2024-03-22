@@ -1,0 +1,8 @@
+dependencies: []
+
+galaxy_info:
+  role_name: dhcp_to_pxe
+  author: glizzus
+  description: Point a DHCP server to a PXE server
+  license: "MIT"
+  min_ansible_version: '2.4'
