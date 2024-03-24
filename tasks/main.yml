@@ -19,7 +19,7 @@
       when: current_setting.stdout != item.value
       register: update_setting
       changed_when: update_setting.rc == 0
-      with_items: "{{ current_settings.results }}"
+      with_items: "{{ current_setting.results }}"
       notify:
         - Commit uci
         - Restart dnsmasq
